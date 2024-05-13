@@ -1,34 +1,51 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
-import connectDB from "./config/db";
-import cookieParser from "cookie-parser";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import session from 'express-session'; 
+import { connectToDatabase } from "./config/connection";
+import { errorHandler } from "./middleware/errorHandler";
+import authRouter from './routes/authRouter'
 
-const port = process.env.PORT || 5000;
-
-connectDB();
-
+const CLIENT_URL = process.env.CLIENT_URL;
 const app = express();
+app.use(cookieParser());
+
+const httpServer = require("http").createServer(app);
+
+
+app.use(express.json());
+app.use(
+  session({
+    secret: "your_session_secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: `${CLIENT_URL}`,
     credentials: true,
     exposedHeaders: ["set-cookie"],
   })
 );
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use("/", express.static("Backend/uploads"));
+app.use(express.static("src/public"));
+app.use('/auth',authRouter)
 
-app.get("/", (req, res) => {
-  res.send("API is running....");
-});
-// app.use("/api/users", userRoutes);
-// app.use("/api/admin", adminRoutes);
-try {
-  app.listen(port, () => console.log(`Server started on port ${port}`));
-} catch (error) {    
-  console.log(error);
-}
+const port = process.env.PORT || 5000;
+
+connectToDatabase()
+  .then(() => {
+    app.use(errorHandler);
+    httpServer.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to connect to MongoDB:", error);
+  });
+
+
+
+
