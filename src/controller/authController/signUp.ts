@@ -1,45 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { Temporary } from "../modal/temporary";
+import { Temporary } from "../../modal/temporary";
 import router from "routes/authRouter";
 import bcrypt from "bcrypt";
 import * as nodemailer from "nodemailer";
-import { User } from "../modal/users";
+import { User } from "../../modal/users";
 import jwt from "jsonwebtoken";
+// import {randomInt} from 'crypto'
 
-export const login = async (req: Request, res: Response) => {
-  try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      return res.status(400).json({ error: "Email not found" });
-    }
 
-    const isPasswordMatch = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
-    if (!isPasswordMatch) {
-      return res.status(400).json({ error: "Password does not match" });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    // Include the token in the response
-    res
-      .status(200)
-      .json({
-        token: token,
-        message: "Login successful. Please store this token in localStorage.",
-      });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
@@ -95,6 +63,9 @@ const generateotp = () => {
   return Math.floor(100000 + Math.random() * 900000)
     .toString()
     .slice(0, 6);
+  // const otp =randomInt(100000,1000000)
+
+  return otp
 };
 
 export const otpVerification = async (req: Request, res: Response) => {
@@ -125,14 +96,4 @@ export const resendOtp = async (req: Request, res: Response) => {
   //todo resend otp logic
 };
 
-export const googlelogin = async (req: Request, res: Response) => {
-  // console.log("google dadta vannu ", req.body);
-  const user = new User({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.profileData.sub,
-  });
-  const newUser = await user.save();
-  console.log(newUser);
-  return res.status(200).json({ message: "user registration succesfull" });
-};
+
