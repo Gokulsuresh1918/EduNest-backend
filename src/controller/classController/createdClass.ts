@@ -24,9 +24,10 @@ export const createClassroom = async (
     let user = req.user;
     let userId = user.userId;
     const userData = await User.findById(userId);
-    console.log("ashwin", userData);
+    // console.log("ashwin", userData);
 
     const newTeacher = {
+      id: userData._id,
       name: userData.name,
       email: userData.email,
     };
@@ -36,9 +37,9 @@ export const createClassroom = async (
       description: req.body.description,
       students: [],
       teacher: [newTeacher],
-      owner: userData.name,
+      owner: userData._id,
+      profilePicture: req.body.profilePicture,
       roomCode: req.body.code,
-      userId: req.body.userId,
     });
 
     await newClassroom.save();
@@ -54,8 +55,12 @@ export const createClassroom = async (
   }
 };
 
-
-export const getClassData =async(req:Request,res:Response)=>{
-  // const ClassData = await Classroom.findById(userId);
-
-}
+export const getClassData = async (req: Request, res: Response) => {
+  const classId = req.params?.id;
+  // console.log("querryil vana data", classId);
+  const classData = await Classroom.findById(classId);
+  res.status(200).json({
+    message: "Classroom data fetched",
+    classroom: classData,
+  });
+};
