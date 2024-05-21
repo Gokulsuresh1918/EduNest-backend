@@ -34,13 +34,20 @@ export const registerUser = async (req: Request, res: Response) => {
     text: emailText,
   };
 
-  transporter.sendMail(mailOptions, (error: any, info: { response: any }) => {
+  transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log("Error sending OTP:", error);
+      return res.status(500).json({ error: "Failed to send OTP" }); 
     }
-
-    console.log("OTP sent:", info.response);
+  
+    if (info) {
+      console.log("OTP sent:", info.response);
+    } else {
+      console.log("Info is undefined");
+      // Handle the case where info is undefined
+    }
   });
+  
   // Hashing of password and adding to the database
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(user.password, saltRounds);

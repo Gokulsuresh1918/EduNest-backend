@@ -2,12 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 
-// Define a more specific type for the user property
-interface User {
+    interface User {
   userId: string;
   username: string;
   email: string;
-  // Add other user properties as necessary
 }
 
 // Extend the Request interface to include a user property
