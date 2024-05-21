@@ -112,3 +112,26 @@ export const deleteClass = async (req: Request, res: Response)  => {
     res.status(500).json({ message: "An error occurred while processing your request." });
   }
 };
+export const blockUser = async (req: Request, res: Response)  => {
+  const userId = req.params?.id;
+  // console.log('clasuserIds',userId);
+  
+  try {
+ 
+    const UserData = await User.findByIdAndUpdate(userId, { $set: { status: true } }, { new: true });
+
+// console.log('found User',UserData);
+
+    if (!UserData) {
+      return res.status(404).json({ message: "UserData not found" });
+    }
+
+    res.status(200).json({
+      message: "User marked as Blocked",
+      User: UserData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while processing your request." });
+  }
+};

@@ -1,5 +1,5 @@
 import express from "express";
-import { createClassroom,getClassData,getStudentData,deleteClass } from "../controller/classController/createdClass";
+import { createClassroom,getClassData,getStudentData,deleteClass,blockUser } from "../controller/classController/createdClass";
 import { joinClass } from "../controller/classController/joinedClass";
 import authenticateToken from "../middleware/authMiddleware";
 import verifyToken from "../middleware/verifyToken";
@@ -11,6 +11,7 @@ router.post("/joinClass", joinClass);
 router.get("/getClassData/:id", getClassData);
 router.get("/getStudentData/:id", getStudentData);
 router.patch("/deleteClass/:id", deleteClass);
+router.patch("/blockUser/:id", blockUser);
 // router.patch("/classrooomUpdate", classrooomUpdate);
 
 export default router;

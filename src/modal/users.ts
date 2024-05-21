@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, required: true },
     password: { type: String },
     otp: { type: Number, required: false },
+    status: { type: Boolean, default:true },
     createdClassrooms: [{ type: Schema.Types.ObjectId, ref: "Classroom" }],
     joinedClassrooms: [{ type: Schema.Types.ObjectId, ref: "Classroom" }],
   },
