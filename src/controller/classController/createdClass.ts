@@ -1,5 +1,6 @@
 import { Temporary } from "../../modal/temporary";
 import { User } from "../../modal/users";
+import { Task } from "../../modal/assignedTask";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Classroom } from "../../modal/classroom";
@@ -86,18 +87,17 @@ export const getStudentData = async (req: Request, res: Response) => {
   });
 };
 
-export const deleteClass = async (req: Request, res: Response)  => {
+export const deleteClass = async (req: Request, res: Response) => {
   const classCode = req.params?.id;
   // console.log('class',classCode);
-  
+
   try {
- 
     const updatedClassroom = await Classroom.findOneAndUpdate(
-      {roomCode: classCode },
+      { roomCode: classCode },
       { $set: { status: true } },
-      { new: true } 
+      { new: true }
     );
-// console.log('found class',updatedClassroom);
+    // console.log('found class',updatedClassroom);
 
     if (!updatedClassroom) {
       return res.status(404).json({ message: "Classroom not found" });
@@ -109,18 +109,23 @@ export const deleteClass = async (req: Request, res: Response)  => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "An error occurred while processing your request." });
+    res
+      .status(500)
+      .json({ message: "An error occurred while processing your request." });
   }
 };
-export const blockUser = async (req: Request, res: Response)  => {
+export const blockUser = async (req: Request, res: Response) => {
   const userId = req.params?.id;
   // console.log('clasuserIds',userId);
-  
-  try {
- 
-    const UserData = await User.findByIdAndUpdate(userId, { $set: { status: true } }, { new: true });
 
-// console.log('found User',UserData);
+  try {
+    const UserData = await User.findByIdAndUpdate(
+      userId,
+      { $set: { status: true } },
+      { new: true }
+    );
+
+    // console.log('found User',UserData);
 
     if (!UserData) {
       return res.status(404).json({ message: "UserData not found" });
@@ -129,6 +134,35 @@ export const blockUser = async (req: Request, res: Response)  => {
     res.status(200).json({
       message: "User marked as Blocked",
       User: UserData,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while processing your request." });
+  }
+};
+export const assigntask = async (req: Request, res: Response) => {
+  try {
+    const task = req.body
+    // console.log('task',task);
+
+    const user = await User.findOne({ email: task.studentEmail }).exec();
+
+    // console.log('userdadta',user);
+    
+   const tasks = new Task({
+    title: req.body.task, 
+    dueDate: req.body.dueDate, 
+    assignedTo: [user._id], 
+  });
+
+  const taskData = await Task.insertMany([tasks]);
+    // console.log('userdadta',taskData);
+
+    res.status(201).json({
+      message: "Task successfully assigned.",
+      task: task,
     });
   } catch (error) {
     console.error(error);
