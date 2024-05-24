@@ -6,6 +6,9 @@ import {
   deleteClass,
   blockUser,
   assigntask,
+  bulkEmail,
+  fileUpload,
+  fileData
 } from "../controller/classController/createdClass";
 import { joinClass } from "../controller/classController/joinedClass";
 import authenticateToken from "../middleware/authMiddleware";
@@ -21,6 +24,10 @@ router.get("/getStudentData/:id", getStudentData);
 
 router.patch("/deleteClass/:id", deleteClass);
 router.patch("/blockUser/:id", blockUser);
-router.post("/assigntask", assigntask);
 
+router.post("/assigntask", assigntask);
+router.post("/bulkEmail", bulkEmail);
+
+router.post("/fileUpload", fileUpload);
+router.get("/fileData/:id", fileData);
 export default router;

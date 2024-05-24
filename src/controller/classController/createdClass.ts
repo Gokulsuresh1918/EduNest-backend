@@ -1,8 +1,10 @@
 import { Temporary } from "../../modal/temporary";
 import { User } from "../../modal/users";
+import { File } from "../../modal/uploads";
 import { Task } from "../../modal/assignedTask";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 import { Classroom } from "../../modal/classroom";
 
 // Extend the Request interface to include a user property
@@ -144,20 +146,20 @@ export const blockUser = async (req: Request, res: Response) => {
 };
 export const assigntask = async (req: Request, res: Response) => {
   try {
-    const task = req.body
+    const task = req.body;
     // console.log('task',task);
 
     const user = await User.findOne({ email: task.studentEmail }).exec();
 
     // console.log('userdadta',user);
-    
-   const tasks = new Task({
-    title: req.body.task, 
-    dueDate: req.body.dueDate, 
-    assignedTo: [user._id], 
-  });
 
-  const taskData = await Task.insertMany([tasks]);
+    const tasks = new Task({
+      title: req.body.task,
+      dueDate: req.body.dueDate,
+      assignedTo: [user._id],
+    });
+
+    const taskData = await Task.insertMany([tasks]);
     // console.log('userdadta',taskData);
 
     res.status(201).json({
@@ -166,6 +168,85 @@ export const assigntask = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "An error occurred while processing your request." });
+    res
+      .status(500)
+      .json({ message: "An error occurred while processing your request." });
+  }
+};
+export const bulkEmail = async (req: Request, res: Response) => {
+  try {
+    const { subject, body, emailAddresses } = req.body;
+    // console.log(subject, body, emailAddresses);
+
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MY_EMAIL,
+        pass: process.env.MY_PASS,
+      },
+    });
+
+    // Setup email options
+    let mailOptions = {
+      from: process.env.MY_EMAIL,
+      to: emailAddresses,
+      subject: subject,
+      text: body,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).send(error.toString());
+      }
+    });
+
+    res.status(201).json({
+      message: "Email Sent successfully .",
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while processing your request." });
+  }
+};
+
+export const fileData = async (req: Request, res: Response) => {
+  try {
+    const classCode = req.params?.id;
+    console.log('classCode', classCode);
+
+    const files = await File.find({ classCode });
+// console.log('file',files);
+
+    res.status(200).json({ files }); 
+  } catch (error) {
+    console.error('Error retrieving files:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+export const fileUpload = async (req:Request, res:Response) => {
+  try {
+    const { filename, fileType, fileSize, fileUrl, uploaderId,classCode } = req.body;
+    
+    // if (!filename || !fileType || !fileSize || !fileUrl || !uploaderId) {
+    //   return res.status(400).json({ message: 'All fields are required' });
+    // }
+
+    const newFile = new File({
+      filename,
+      fileType,
+      fileSize,
+      fileUrl,
+      uploaderId,
+      classCode
+    });
+
+    const savedFile = await newFile.save();
+
+    res.status(200).json(savedFile);
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
