@@ -8,7 +8,8 @@ import {
   assigntask,
   bulkEmail,
   fileUpload,
-  fileData
+  fileData,
+  assignedStudent
 } from "../controller/classController/createdClass";
 import { joinClass } from "../controller/classController/joinedClass";
 import authenticateToken from "../middleware/authMiddleware";
@@ -21,6 +22,7 @@ router.post("/joinClass", joinClass);
 
 router.get("/getClassData/:id", getClassData);
 router.get("/getStudentData/:id", getStudentData);
+router.get("/assignedStudent/:id", assignedStudent);
 
 router.patch("/deleteClass/:id", deleteClass);
 router.patch("/blockUser/:id", blockUser);

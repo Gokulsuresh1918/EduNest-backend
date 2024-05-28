@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
 
-    interface User {
+interface User {
   userId: string;
   username: string;
   email: string;
@@ -24,9 +23,7 @@ const verifyToken = (req: ExtendedRequest, res: Response, next: NextFunction) =>
   try {
     // Verify the token
     const decoded: User = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET) as User;
-  
     req.user = decoded;
-    // console.log("usedddddd",decoded)
     next();
   } catch (error) {
     console.error("Error verifying token:", error);

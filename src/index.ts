@@ -37,7 +37,7 @@ app.use(express.static("src/public"));
 app.use("/auth", authRouter);
 app.use("/class", classRouter);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT ;
 
 connectToDatabase()
   .then(() => {

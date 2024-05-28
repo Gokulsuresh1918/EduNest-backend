@@ -7,8 +7,6 @@ import { User } from "../../modal/users";
 import jwt from "jsonwebtoken";
 // import {randomInt} from 'crypto'
 
-
-
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   const otp = generateotp();
@@ -26,20 +24,83 @@ export const registerUser = async (req: Request, res: Response) => {
   if (existingUser) {
     return res.status(400).json({ error: "user already exists" });
   }
-  const emailText = `Hi, this is from EduNest. You just signed up. Your OTP is: ${otp}`;
+  const verificationUrl = `${process.env.SERVER_URL}/auth/verify?token=${otp}`;
+  
+
+  const htmlContent = `
+  <html>
+  <head>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f4f4f4;
+              color: #333;
+          }
+          .container {
+              padding: 20px;
+              background-color: #fff;
+              border-radius: 5px;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              max-width: 600px;
+              margin: auto;
+          }
+          .code {
+              font-size: 24px;
+              font-weight: bold;
+              color: #4CAF50;
+              margin: 20px 0;
+          }
+          .button {
+              background-color: #4CAF50;
+              color: white;
+              padding: 10px 20px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 4px 2px;
+              cursor: pointer;
+              border-radius: 5px;
+          }
+          .link {
+              color: #4CAF50;
+              text-decoration: none;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <h1>Verify Your Email</h1>
+          <p>Thank you for signing up. You can verify your email address using one of the following options:</p>
+          <div>
+              <h2>Option 1: Verify using OTP</h2>
+              <p>Use the code below to verify your email address:</p>
+              <div class="code">${otp}</div>
+          </div>
+          <div>
+              <h2>Option 2: Verify using Email Link</h2>
+              <p>Click the link below to verify your email address:</p>
+              <a href="${verificationUrl}" class="link">Verify Email</a>
+          </div>
+          <p>If you did not sign up for this account, please ignore this email.</p>
+      </div>
+  </body>
+  </html>
+`;
   const mailOptions = {
     from: "edunestofficials@gmail.com",
     to: user.email,
     subject: "OTP Verification",
-    text: emailText,
+    html: htmlContent
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log("Error sending OTP:", error);
-      return res.status(500).json({ error: "Failed to send OTP" }); 
+      return res.status(500).json({ error: "Failed to send OTP" });
     }
-  
+
     if (info) {
       console.log("OTP sent:", info.response);
     } else {
@@ -47,7 +108,7 @@ export const registerUser = async (req: Request, res: Response) => {
       // Handle the case where info is undefined
     }
   });
-  
+
   // Hashing of password and adding to the database
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(user.password, saltRounds);
@@ -72,7 +133,7 @@ const generateotp = () => {
     .slice(0, 6);
   // const otp =randomInt(100000,1000000)
 
-  return otp
+  return otp;
 };
 
 export const otpVerification = async (req: Request, res: Response) => {
@@ -102,5 +163,3 @@ export const resendOtp = async (req: Request, res: Response) => {
   console.log("hree is the resend otp logic");
   //todo resend otp logic
 };
-
-

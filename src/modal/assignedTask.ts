@@ -6,13 +6,13 @@ const TaskSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     dueDate: { type: Date, required: true },
-    //   priority: { type: Number, required: true },
+    classCode: { type: Number, required: true },
     status: {
       type: String,
       enum: ["pending", "inProgress", "completed"],
       default: "pending",
     },
-    assignedTo: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    assignedTo: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

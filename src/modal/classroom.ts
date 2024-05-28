@@ -24,6 +24,7 @@ const ClassroomSchema = new mongoose.Schema(
     status: { type: Boolean ,default:false},
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
+    teacherCode:{type:String}
   },
   { timestamps: true }
 );
