@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@livekit/components-react": "^2.3.1",
+    "@livekit/components-styles": "^1.0.12",
     "@types/nodemailer": "^6.4.15",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
@@ -21,6 +23,7 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
+    "livekit-server-sdk": "^2.3.0",
     "mongoose": "^8.3.3",
     "nodemailer": "^6.9.13",
     "react-toastify": "^10.0.5"

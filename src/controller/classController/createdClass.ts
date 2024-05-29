@@ -224,7 +224,7 @@ export const assigntask = async (req: Request, res: Response) => {
     const mailOptions = {
       from: "edunestofficials@gmail.com",
       to: user.email,
-      subject: "OTP Verification",
+      subject: "Task Assigned in the ClassRoom",
       html: htmlContent,
     };
     const transporter = nodemailer.createTransport({

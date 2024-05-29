@@ -1,0 +1,1 @@
+{"version":3,"file":"timers.d.ts","sourceRoot":"","sources":["../../../src/room/timers.ts"],"names":[],"mappings":"AAAA;;;;GAIG;AACH,MAAM,CAAC,OAAO,OAAO,cAAc;IAEjC,MAAM,CAAC,UAAU,uFAAmE;IAGpF,MAAM,CAAC,WAAW,uFAAqE;IAEvF,MAAM,CAAC,YAAY,mCAAuE;IAE1F,MAAM,CAAC,aAAa,mCAAyE;CAC9F"}
