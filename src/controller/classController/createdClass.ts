@@ -120,9 +120,14 @@ export const blockUser = async (req: Request, res: Response) => {
   // console.log('clasuserIds',userId);
 
   try {
+     const user= await User.findById(userId)
+    const ChangeStatus= user.status
+    // console.log('user',user);
+    // console.log('bhhdjfjfj',ChangeStatus);
+    
     const UserData = await User.findByIdAndUpdate(
       userId,
-      { $set: { status: true } },
+      { $set: { status: !ChangeStatus } },
       { new: true }
     );
 
