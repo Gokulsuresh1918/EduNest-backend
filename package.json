@@ -13,20 +13,24 @@
   "dependencies": {
     "@livekit/components-react": "^2.3.1",
     "@livekit/components-styles": "^1.0.12",
+    "@types/ejs": "^3.1.5",
     "@types/nodemailer": "^6.4.15",
+    "@types/socket.io": "^3.0.2",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
     "livekit-server-sdk": "^2.3.0",
     "mongoose": "^8.3.3",
     "nodemailer": "^6.9.13",
-    "react-toastify": "^10.0.5"
+    "react-toastify": "^10.0.5",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

@@ -4,6 +4,8 @@ import { Classroom } from "../../modal/classroom";
 import { File } from "../../modal/uploads";
 import { User } from "../../modal/users";
 import * as nodemailer from "nodemailer";
+import * as ejs from "ejs";
+import * as path from "path";
 
 // Extend the Request interface to include a user property
 interface User {
@@ -120,11 +122,11 @@ export const blockUser = async (req: Request, res: Response) => {
   // console.log('clasuserIds',userId);
 
   try {
-     const user= await User.findById(userId)
-    const ChangeStatus= user.status
+    const user = await User.findById(userId);
+    const ChangeStatus = user.status;
     // console.log('user',user);
     // console.log('bhhdjfjfj',ChangeStatus);
-    
+
     const UserData = await User.findByIdAndUpdate(
       userId,
       { $set: { status: !ChangeStatus } },
@@ -159,67 +161,14 @@ export const assigntask = async (req: Request, res: Response) => {
     // console.log('userdadta',user);
     const verificationUrl = `${URL}/joinedClass/${req.body.demoCode}`;
 
-    const htmlContent = `
-    <html>
-    <head>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                color: #333;
-            }
-            .container {
-                padding: 20px;
-                background-color: #fff;
-                border-radius: 5px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                max-width: 600px;
-                margin: auto;
-            }
-            .task-details {
-                font-size: 16px;
-                margin: 20px 0;
-            }
-            .task-details p {
-                margin: 5px 0;
-            }
-            .button {
-                background-color: #4CAF50;
-                color: white;
-                padding: 10px 20px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 4px 2px;
-                cursor: pointer;
-                border-radius: 5px;
-            }
-            .link {
-                color: #4CAF50;
-                text-decoration: none;
-                font-weight: bold;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>New Task Assigned</h1>
-            <p>You have been assigned a new task by your teacher. Here are the details:</p>
-            <div class="task-details">
-                <p><strong>Title:</strong> ${req.body.task}</p>
-                <p><strong>Due Date:</strong> ${req.body.dueDate}</p>
-                <p><strong>Class Code:</strong> ${req.body.demoCode}</p>
-            </div>
-            <p>Please ensure to complete the task by the due date.</p>
-            <div>
-                <a href="${verificationUrl}" class="button">View Task</a>
-            </div>
-            <p>If you have any questions, please contact your teacher.</p>
-        </div>
-    </body>
-    </html>
-`;
+    // Read the HTML template and render it with data
+    const templatePath = path.join(__dirname, '..', '..', 'emailTemplate.html');
+    const htmlContent = await ejs.renderFile(templatePath, {
+      task: req.body.task,
+      dueDate: req.body.dueDate,
+      demoCode: req.body.demoCode,
+      verificationUrl: verificationUrl,
+    });
 
     const mailOptions = {
       from: "edunestofficials@gmail.com",
@@ -227,6 +176,7 @@ export const assigntask = async (req: Request, res: Response) => {
       subject: "Task Assigned in the ClassRoom",
       html: htmlContent,
     };
+
     const transporter = nodemailer.createTransport({
       service: "Gmail", // e.g., 'Gmail', 'SMTP'
       auth: {

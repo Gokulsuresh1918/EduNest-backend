@@ -8,6 +8,7 @@ import { connectToDatabase } from "./config/connection";
 import { errorHandler } from "./middleware/errorHandler";
 import authRouter from "./routes/authRouter";
 import classRouter from "./routes/classroomRoute";
+import { Server } from "socket.io";
 
 const CLIENT_URL = process.env.CLIENT_URL;
 const app = express();
@@ -32,12 +33,35 @@ app.use(
   })
 );
 
+interface SocketCallback {
+  (data?: any): void;
+}
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: CLIENT_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+io.on("connection", (socket) => {
+  // console.log("a user connected");
+
+  socket.on("startCall", (data) => {
+    // Broadcast to all clients that a video call has started
+    io.emit("callStarted", data);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+});
 
 app.use(express.static("src/public"));
 app.use("/auth", authRouter);
 app.use("/class", classRouter);
 
-const port = process.env.PORT ;
+const port = process.env.PORT;
 
 connectToDatabase()
   .then(() => {
