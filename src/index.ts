@@ -9,6 +9,8 @@ import { errorHandler } from "./middleware/errorHandler";
 import authRouter from "./routes/authRouter";
 import classRouter from "./routes/classroomRoute";
 import { Server } from "socket.io";
+import  nodeCron  from "node-cron";
+
 
 const CLIENT_URL = process.env.CLIENT_URL;
 const app = express();
@@ -53,9 +55,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    console.log("user disconnected on Socket");
   });
 });
+
+
 
 app.use(express.static("src/public"));
 app.use("/auth", authRouter);

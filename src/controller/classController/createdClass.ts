@@ -6,6 +6,7 @@ import { User } from "../../modal/users";
 import * as nodemailer from "nodemailer";
 import * as ejs from "ejs";
 import * as path from "path";
+import cron from "node-cron";
 
 // Extend the Request interface to include a user property
 interface User {
@@ -16,7 +17,15 @@ interface User {
 interface ExtendedRequest extends Request {
   user?: User;
 }
-
+function isApproximatelyEqual(
+  date1: Date,
+  date2: Date,
+  toleranceInSeconds: number = 30
+): boolean {
+  const diffInMilliseconds = Math.abs(date1.getTime() - date2.getTime());
+  const diffInSeconds = diffInMilliseconds / 1000;
+  return diffInSeconds <= toleranceInSeconds;
+}
 export const createClassroom = async (
   req: ExtendedRequest,
   res: Response
@@ -154,15 +163,13 @@ export const assigntask = async (req: Request, res: Response) => {
   const URL = process.env.CLIENT_URL;
   try {
     const task = req.body;
-    // console.log('task',task);
-
     const user = await User.findOne({ email: task.studentEmail }).exec();
-
-    // console.log('userdadta',user);
+    const dueDate = new Date(req.body.dueDate);
+    const thirtyMinutesBeforeDueDate = new Date(dueDate.getTime() - 30 * 60000);
     const verificationUrl = `${URL}/joinedClass/${req.body.demoCode}`;
 
     // Read the HTML template and render it with data
-    const templatePath = path.join(__dirname, '..', '..', 'emailTemplate.html');
+    const templatePath = path.join(__dirname, "..", "..", "emailTemplate.html");
     const htmlContent = await ejs.renderFile(templatePath, {
       task: req.body.task,
       dueDate: req.body.dueDate,
@@ -184,17 +191,50 @@ export const assigntask = async (req: Request, res: Response) => {
         pass: process.env.MY_PASS,
       },
     });
+
     transporter.sendMail(mailOptions, (error: any, info: { response: any }) => {
       if (error) {
-        console.log("Error sending OTP:", error);
-        return res.status(500).json({ error: "Failed to send OTP" });
+        console.log("Error sending task assignment email:", error);
+        return res
+          .status(500)
+          .json({ error: "Failed to send task assignment email" });
       }
 
-      if (info) {
-        console.log("OTP sent:", info.response);
-      } else {
-        console.log("Info is undefined");
-        // Handle the case where info is undefined
+      console.log("Task assignment email sent:", info.response);
+    });
+ 
+    const cronSchedule = "* * * * *";
+    const reminderTemplate = path.join(__dirname, "..", "..", "reminderEmailTemplate.html");
+
+    // Schedule email 30 minutes before due date
+    cron.schedule(cronSchedule, async () => {
+      const now = new Date();
+      if (isApproximatelyEqual(now, thirtyMinutesBeforeDueDate)) {
+        // Your scheduled task logic here
+        const reminderHtmlContent = await ejs.renderFile(reminderTemplate, {
+          task: req.body.task,
+          dueDate: req.body.dueDate,
+          demoCode: req.body.demoCode,
+          verificationUrl: verificationUrl,
+        });
+
+        const reminderMailOptions = {
+          from: "edunestofficials@gmail.com",
+          to: user.email,
+          subject: "Reminder: Task Submission Due Soon",
+          html: reminderHtmlContent,
+        };
+
+        transporter.sendMail(
+          reminderMailOptions,
+          (error: any, info: { response: any }) => {
+            if (error) {
+              console.log("Error sending reminder email:", error);
+            } else {
+              console.log("Reminder email sent:", info.response);
+            }
+          }
+        );
       }
     });
 
@@ -260,7 +300,7 @@ export const bulkEmail = async (req: Request, res: Response) => {
 export const fileData = async (req: Request, res: Response) => {
   try {
     const classCode = req.params?.id;
-    console.log("classCode", classCode);
+    // console.log("classCode", classCode);
 
     const files = await File.find({ classCode });
     // console.log('file',files);
