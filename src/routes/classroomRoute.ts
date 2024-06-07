@@ -14,6 +14,7 @@ import {
 import { joinClass } from "../controller/classController/joinedClass";
 import authenticateToken from "../middleware/authMiddleware";
 
+
 const router = express.Router();
 
 router.post("/createClassroom", createClassroom);

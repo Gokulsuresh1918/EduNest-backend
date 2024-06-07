@@ -53,7 +53,9 @@ io.on("connection", (socket) => {
     // Broadcast to all clients that a video call has started
     io.emit("callStarted", data);
   });
-
+  socket.on('drawing', (data) => {
+    socket.broadcast.emit('drawing', data); 
+  });
   socket.on("disconnect", () => {
     console.log("user disconnected on Socket");
   });
