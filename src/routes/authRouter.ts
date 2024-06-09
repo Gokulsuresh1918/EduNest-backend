@@ -1,10 +1,14 @@
 // routes.js
 
 import express from "express";
-import { otpVerification, resendOtp,verify } from "../controller/authController/otpVerification";
+import {
+  otpVerification,
+  resendOtp,
+  verify,
+} from "../controller/authController/otpVerification";
 import { registerUser } from "../controller/authController/signUp";
 import { login, googlelogin } from "../controller/authController/login";
-import authenticateToken from "../middleware/authMiddleware";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 

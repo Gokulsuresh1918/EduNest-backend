@@ -12,7 +12,7 @@ import {
   assignedStudent
 } from "../controller/classController/createdClass";
 import { joinClass } from "../controller/classController/joinedClass";
-import authenticateToken from "../middleware/authMiddleware";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 
 const router = express.Router();
