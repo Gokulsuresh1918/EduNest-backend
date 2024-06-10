@@ -19,6 +19,7 @@ const generateRefreshToken = (user: any) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
+    
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(400).json({ error: "Email not found" });
