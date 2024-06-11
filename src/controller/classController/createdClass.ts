@@ -101,15 +101,14 @@ export const getStudentData = async (req: Request, res: Response) => {
 
 export const deleteClass = async (req: Request, res: Response) => {
   const classCode = req.params?.id;
-  // console.log('class',classCode);
+  console.log('class',classCode);
 
   try {
-    const updatedClassroom = await Classroom.findOneAndUpdate(
-      { roomCode: classCode },
-      { $set: { status: true } },
-      { new: true }
-    );
-    // console.log('found class',updatedClassroom);
+   
+    const classroom = await Classroom.findOne({ roomCode: classCode });
+
+    classroom.status = !classroom.status; // Toggle the status (false -> true, true -> false)
+    const updatedClassroom = await classroom.save();
 
     if (!updatedClassroom) {
       return res.status(404).json({ message: "Classroom not found" });

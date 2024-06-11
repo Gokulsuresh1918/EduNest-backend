@@ -26,7 +26,6 @@ const transporter = nodemailer.createTransport({
 // Register User Function
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password,role } = req.body;
-  console.log("hii", req.body);
 
   const otp = generateOtp();
   console.log("OTP IS ", otp);
