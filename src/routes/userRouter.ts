@@ -10,6 +10,7 @@ import {
   updateUsername,
   addUser,
   updateClass,
+  findUser,
 } from "../controller/userController";
 
 const router = express.Router();
@@ -25,5 +26,6 @@ router.get("/getClassData/:id", getClassData);
 router.post("/updateUsername", updateUsername);
 
 router.post("/addUser", addUser);
+router.post("/findUser", findUser);
 
 export default router;

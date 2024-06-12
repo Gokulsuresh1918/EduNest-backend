@@ -5,9 +5,6 @@ import * as nodemailer from "nodemailer";
 import { Temporary } from "../modal/temporary";
 import bcrypt from "bcrypt";
 
-
-
-
 // Generate OTP
 const generateOtp = () => {
   return Math.floor(100000 + Math.random() * 900000)
@@ -36,6 +33,41 @@ export const userData = async (req: any, res: any) => {
 
     // Send user data back to the frontend
     res.json(userData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+export const findUser = async (req: any, res: any) => {
+  const reqemail = req.body.email;
+  // console.log("fdsfasf", reqemail);
+
+  try {
+    const userData = await User.findOne({ email: reqemail });
+
+    if (!userData) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (req.body.newPassword) {
+      // console.log('dasdsadas',req.body.newPassword);
+
+      const newpass = req.body.newPassword;
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newpass, salt);
+
+      const updatedUser = await User.findOneAndUpdate(
+        { email: reqemail },
+        { password: hashedPassword },
+        { new: true }
+      );
+console.log(updatedUser);
+
+      res
+        .status(200)
+        .json({ message: "Password Updated Now LogIn" });
+    } else {
+      res.json(userData);
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -106,16 +138,13 @@ export const updateUsername = async (req: Request, res: Response) => {
   }
 };
 export const updateUser = async (req: Request, res: Response) => {
-
-
-  const userId = req.params?.id;;
+  const userId = req.params?.id;
 
   try {
     const userData = await User.findById(userId);
     if (!userData) {
       return res.status(404).json({ message: "User not found" });
     }
-
 
     userData.name = req.body.name;
     userData.email = req.body.email;
@@ -128,17 +157,14 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 export const updateClass = async (req: Request, res: Response) => {
-
-
-  const userId = req.params?.id;;
-console.log(req.body);
+  const userId = req.params?.id;
+  console.log(req.body);
 
   try {
     const classData = await Classroom.findById(userId);
     if (!classData) {
       return res.status(404).json({ message: "Class not found" });
     }
-
 
     classData.title = req.body.title;
     classData.description = req.body.description;
@@ -164,10 +190,10 @@ export const addUser = async (req: Request, res: Response) => {
 
   const newUser = new User({
     name,
-    email,  });
+    email,
+  });
 
   await newUser.save();
 
   res.status(201).json({ message: "User created successfully", newUser });
-
 };
