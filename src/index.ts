@@ -9,6 +9,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import authRouter from "./routes/authRouter";
 import classRouter from "./routes/classroomRoute";
 import userRouter from "./routes/userRouter";
+import subRouter from "./routes/subRouter";
 import { Server } from "socket.io";
 import  nodeCron  from "node-cron";
 
@@ -80,6 +81,7 @@ app.use(express.static("src/public"));
 app.use("/auth", authRouter);
 app.use("/class", classRouter);
 app.use("/user", userRouter);
+app.use("/sub", subRouter);
 
 const port = process.env.PORT;
 
