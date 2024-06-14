@@ -168,7 +168,7 @@ export const assigntask = async (req: Request, res: Response) => {
     const verificationUrl = `${URL}/joinedClass/${req.body.demoCode}`;
 
     // Read the HTML template and render it with data
-    const templatePath = path.join(__dirname, "..", "..", "emailTemplate.html");
+    const templatePath = path.join(__dirname, "../../templates/emailTemplate.html");
     const htmlContent = await ejs.renderFile(templatePath, {
       task: req.body.task,
       dueDate: req.body.dueDate,

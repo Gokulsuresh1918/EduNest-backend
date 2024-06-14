@@ -40,6 +40,7 @@ export const userData = async (req: any, res: any) => {
 };
 export const findUser = async (req: any, res: any) => {
   const reqemail = req.body.email;
+  const newpass = req.body.newPassword;
   // console.log("fdsfasf", reqemail);
 
   try {
@@ -48,10 +49,8 @@ export const findUser = async (req: any, res: any) => {
     if (!userData) {
       return res.status(404).json({ message: "User not found" });
     }
-    if (req.body.newPassword) {
-      // console.log('dasdsadas',req.body.newPassword);
-
-      const newpass = req.body.newPassword;
+    if (newpass) {
+      
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newpass, salt);
 
@@ -60,11 +59,9 @@ export const findUser = async (req: any, res: any) => {
         { password: hashedPassword },
         { new: true }
       );
-console.log(updatedUser);
+      console.log(updatedUser);
 
-      res
-        .status(200)
-        .json({ message: "Password Updated Now LogIn" });
+      res.status(200).json({ message: "Password Updated Now LogIn" });
     } else {
       res.json(userData);
     }
@@ -105,16 +102,25 @@ export const classroomData = async (req: any, res: any) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 export const getClassData = async (req: Request, res: Response) => {
   const classId = req.params?.id;
-  // console.log("queryil vana data", classId);
-  const classData = await Classroom.findById(classId);
-  // console.log("retrieved data backend", classData);
 
-  res.status(200).json({
-    message: "Classroom data fetched",
-    classroom: classData.title,
-  });
+  try {
+    const classData = await Classroom.findById(classId);
+
+    if (!classData) {
+      return res.status(404).json({ message: "Class not found" });
+    }
+
+    res.status(200).json({
+      message: "Classroom data fetched",
+      classroom: classData.title || classData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const updateUsername = async (req: Request, res: Response) => {

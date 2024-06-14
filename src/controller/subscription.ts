@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { User } from "../modal/users";
 import Razorpay from "razorpay";
 
 const razorpayInstance = new Razorpay({
@@ -27,8 +28,29 @@ export const createOrder = async (req: Request, res: Response) => {
   }
 };
 
-export const updateSubscribe=(req: any,res: any)=>{
-console.log('backill',req.params.id);
-console.log('bodyill vanau',req.body.data);
 
-}
+export const updateSubscribe = async (req:Request, res:Response) => {
+  const userId = req.params.id;
+  const paymentDetails = req.body.data;
+
+  console.log('backill', userId);
+  console.log('bodyill vanau', paymentDetails);
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isSubscribed = true; 
+    user.paymentDetails = paymentDetails; 
+
+    await user.save();
+
+    return res.status(200).json({ message: "User subscription updated successfully", user });
+  } catch (error) {
+    console.error("Error updating subscription:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};

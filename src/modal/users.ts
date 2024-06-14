@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { Classroom } from "../modal/classroom";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -13,7 +12,10 @@ const UserSchema = new mongoose.Schema(
     role: { type: String, enum: ["user", "admin"], default: "user" },
     googleId: { type: String },
     refreshToken: { type: String },
+    isSubscribed: { type: Boolean, default: false }, 
+    paymentDetails: { type: Object }, 
   },
   { timestamps: true }
 );
+
 export const User = mongoose.model("User", UserSchema);
