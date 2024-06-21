@@ -5,11 +5,12 @@ import {
   getStudentData,
   deleteClass,
   blockUser,
-  assigntask,
+  assignTask,
   bulkEmail,
   fileUpload,
   fileData,
-  assignedStudent
+  assignedStudent,
+  classDetails
 } from "../controller/classController/createdClass";
 import { joinClass } from "../controller/classController/joinedClass";
 import { authMiddleware } from "../middleware/authMiddleware";
@@ -21,13 +22,14 @@ router.post("/createClassroom", createClassroom);
 router.post("/joinClass", joinClass);
 
 router.get("/getClassData/:id", getClassData);
+router.get("/classDetails/:id", classDetails);
 router.get("/getStudentData/:id", getStudentData);
 router.get("/assignedStudent/:id", assignedStudent);
 
 router.patch("/deleteClass/:id", deleteClass);
 router.patch("/blockUser/:id", blockUser);
 
-router.post("/assigntask", assigntask);
+router.post("/assigntask", assignTask);
 router.post("/bulkEmail", bulkEmail);
 
 router.post("/fileUpload", fileUpload);
