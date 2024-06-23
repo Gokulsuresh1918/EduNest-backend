@@ -15,7 +15,7 @@ import {
 
 const router = express.Router();
 
-router.get("/userData/:id", userData);
+router.get("/userData", userData);
 router.patch("/updateUser/:id", updateUser);
 router.put("/updateClass/:id", updateClass);
 

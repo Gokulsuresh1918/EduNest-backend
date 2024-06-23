@@ -21,11 +21,104 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const userData = async (req: any, res: any) => {
-  const id = req.params?.id;
+
+
+// Function to find user by ID or email and send data to the frontend
+export const userData = async (req: Request, res: Response) => {
+  const { id, email } = req.query;
+// console.log('req querry',req.query);
+
   try {
-    const userData = await User.findById(id);
-    // console.log('user',userData);
+    let userData;
+
+    if (id) {
+      userData = await User.findById(id);
+    } else if (email) {
+      userData = await User.findOne({ email: email });
+      if (userData) {
+        // Generate OTP
+        const otp = userData.otp
+        console.log('otp anaii ',otp);
+        
+        const htmlContent = `
+          <html>
+          <head>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      background-color: #f4f4f4;
+                      color: #333;
+                  }
+                  .container {
+                      padding: 20px;
+                      background-color: #fff;
+                      border-radius: 5px;
+                      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                      max-width: 600px;
+                      margin: auto;
+                  }
+                  .code {
+                      font-size: 24px;
+                      font-weight: bold;
+                      color: #4CAF50;
+                      margin: 20px 0;
+                  }
+                  .button {
+                      background-color: #4CAF50;
+                      color: white;
+                      padding: 10px 20px;
+                      text-align: center;
+                      text-decoration: none;
+                      display: inline-block;
+                      font-size: 16px;
+                      margin: 4px 2px;
+                      cursor: pointer;
+                      border-radius: 5px;
+                  }
+                  .link {
+                      color: #4CAF50;
+                      text-decoration: none;
+                      font-weight: bold;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>Verify Your Email</h1>
+                  <p>Thank you for signing up. You can verify your email address using one of the following options:</p>
+                  <div>
+                      <h2>Option 1: Verify using OTP</h2>
+                      <p>Use the code below to verify your email address:</p>
+                      <div class="code">${otp}</div>
+                  </div>
+                 
+                  <p>If you did not sign up for this account, please ignore this email.</p>
+              </div>
+          </body>
+          </html>
+        `;
+
+        const mailOptions = {
+          from: "edunestofficials@gmail.com",
+          to: userData.email,
+          subject: "OTP Verification",
+          html: htmlContent,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log("Error sending OTP:", error);
+            return res.status(500).json({ error: "Failed to send OTP" });
+          }
+
+          if (info) {
+            console.log("OTP sent:", info.response);
+          }
+        });
+      }
+    } else {
+      return res.status(400).json({ message: "ID or email is required" });
+    }
 
     if (!userData) {
       return res.status(404).json({ message: "User not found" });
@@ -41,7 +134,7 @@ export const userData = async (req: any, res: any) => {
 export const findUser = async (req: any, res: any) => {
   const reqemail = req.body.email;
   const newpass = req.body.newPassword;
-  // console.log("fdsfasf", reqemail);
+  // console.log("fdsfasf", req.body);
 
   try {
     const userData = await User.findOne({ email: reqemail });
@@ -49,6 +142,8 @@ export const findUser = async (req: any, res: any) => {
     if (!userData) {
       return res.status(404).json({ message: "User not found" });
     }
+    // console.log("userData", userData);
+
     if (newpass) {
       
       const salt = await bcrypt.genSalt(10);
@@ -59,7 +154,7 @@ export const findUser = async (req: any, res: any) => {
         { password: hashedPassword },
         { new: true }
       );
-      console.log(updatedUser);
+      // console.log('updatedUser',updatedUser);
 
       res.status(200).json({ message: "Password Updated Now LogIn" });
     } else {

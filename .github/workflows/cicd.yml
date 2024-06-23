@@ -1,0 +1,50 @@
+name: CICD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Login to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} 
+
+      - name: Build docker image
+        run: docker build -t gokulsuresh/edunest-backend:v1 ./api
+
+      - name: Publish image to docker hub
+        run: docker push gokulsuresh/edunest-backend:v1:latest
+        
+  deploy:
+    needs: build
+    runs-on: [aws-ec2-server]
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull gokulsuresh/edunest-backend:v1:latest
+
+      - name: Delete old container
+        run: docker rm -f edunest-container
+
+      - name: Run docker container
+        run: |
+          docker run -d -p 8000:8000 --name edunest-container \
+          -e MONGODB_URL='${{ secrets.MONGODB_URL }}' \
+          -e PORT='${{ secrets.PORT }}' \
+          -e CLIENT_URL='${{ secrets.CLIENT_URL }}' \
+          -e SERVER_URL='${{ secrets.SERVER_URL }}' \
+          -e MY_PASS='${{ secrets.MY_PASS }}' \
+          -e MY_EMAIL='${{ secrets.MY_EMAIL }}' \
+          -e ACCESS_TOKEN_SECRET='${{ secrets.ACCESS_TOKEN_SECRET }}' \
+          -e REFRESH_TOKEN_SECRET='${{ secrets.REFRESH_TOKEN_SECRET }}' \
+          -e RESENDAPI='${{ secrets.RESENDAPI }}' \
+          -e LIVEKIT_API_KEY='${{ secrets.LIVEKIT_API_KEY }}' \
+          -e LIVEKIT_API_SECRET='${{ secrets.LIVEKIT_API_SECRET }}' \
+          -e NEXT_PUBLIC_LIVEKIT_URL='${{ secrets.NEXT_PUBLIC_LIVEKIT_URL }}' \
+          -e KEY_ID='${{ secrets.KEY_ID }}' \
+          -e KEY_SECRET='${{ secrets.KEY_SECRET }}' \
+          gokulsuresh/edunest-backend:v1
