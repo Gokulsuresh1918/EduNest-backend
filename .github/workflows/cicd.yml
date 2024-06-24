@@ -18,14 +18,14 @@ jobs:
         run: docker build -t gokulsuresh/edunest-backend:v1 .
 
       - name: Publish image to docker hub
-        run: docker push gokulsuresh/edunest-backend:v1:latest
+        run: docker push gokulsuresh/edunest-backend:v1
         
   deploy:
     needs: build
     runs-on: [aws-ec2-server]
     steps:
       - name: Pull image from docker hub
-        run: docker pull gokulsuresh/edunest-backend:v1:latest
+        run: docker pull gokulsuresh/edunest-backend:v1
 
       - name: Delete old container
         run: docker rm -f edunest-container
