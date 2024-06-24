@@ -15,7 +15,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} 
 
       - name: Build docker image
-        run: docker build -t gokulsuresh/edunest-backend:v1 ./api
+        run: docker build -t gokulsuresh/edunest-backend:v1 
 
       - name: Publish image to docker hub
         run: docker push gokulsuresh/edunest-backend:v1:latest
