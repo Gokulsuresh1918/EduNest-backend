@@ -2,11 +2,11 @@ name: CICD
 
 on:
   push:
-    branches: [main]
+    branches: [Main]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted #ubuntu-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
