@@ -32,7 +32,7 @@ jobs:
 
       - name: Run docker container
         run: |
-          docker run -d -p 8000:8000 --name edunest-container \
+          docker run -d -p 4000:4000 --name edunest-container \
           -e MONGODB_URL='${{ secrets.MONGODB_URL }}' \
           -e PORT='${{ secrets.PORT }}' \
           -e CLIENT_URL='${{ secrets.CLIENT_URL }}' \
