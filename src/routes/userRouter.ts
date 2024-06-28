@@ -11,11 +11,13 @@ import {
   addUser,
   updateClass,
   findUser,
+  getStudentsData
 } from "../controller/userController";
 
 const router = express.Router();
 
 router.get("/userData", userData);
+router.get("/getStudentsData", getStudentsData);
 router.patch("/updateUser/:id", updateUser);
 router.put("/updateClass/:id", updateClass);
 

@@ -298,3 +298,26 @@ export const addUser = async (req: Request, res: Response) => {
 
   res.status(201).json({ message: "User created successfully", newUser });
 };
+
+
+export const getStudentsData = async (req: Request, res: Response) => {
+  const studentIds = req.query.ids;
+// console.log('entere',req.query.ids);
+
+  if (!Array.isArray(studentIds)) {
+    return res.status(400).json({ message: "Invalid student IDs" });
+  }
+
+  try {
+    const students = await User.find({ _id: { $in: studentIds } });
+
+    if (!students.length) {
+      return res.status(404).json({ message: "Students not found" });
+    }
+
+    res.status(200).json(students);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
