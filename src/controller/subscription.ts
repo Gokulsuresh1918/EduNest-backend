@@ -33,8 +33,8 @@ export const updateSubscribe = async (req:Request, res:Response) => {
   const userId = req.params.id;
   const paymentDetails = req.body.data;
 
-  console.log('backill', userId);
-  console.log('bodyill vanau', paymentDetails);
+  // console.log('backill  chumma', userId);
+  // console.log('bodyill vanau', paymentDetails);
 
   try {
     const user = await User.findById(userId);
