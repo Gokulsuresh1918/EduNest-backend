@@ -35,7 +35,6 @@ function isApproximatelyEqual(
   const diffInSeconds = diffInMilliseconds / 1000;
   return diffInSeconds <= toleranceInSeconds;
 }
-
 /**
  * Create a new classroom.
  * @param req Request object containing classroom data
@@ -52,6 +51,8 @@ export const createClassroom = async (
 
     // Find the user by ID to get additional user details
     const userData = await User.findById(ownerId);
+
+ 
 
     // Create a new teacher object with the user's name and email
     const newTeacher = {
@@ -73,6 +74,10 @@ export const createClassroom = async (
 
     // Save the new classroom to the database
     const savedClassroom = await newClassroom.save();
+
+    // Update user's createdClassrooms with the new classroom ID
+    userData.createdClassrooms.push(savedClassroom._id);
+    await userData.save();
 
     res.status(200).json({
       message: "Classroom creation successful",
