@@ -11,7 +11,8 @@ import {
   addUser,
   updateClass,
   findUser,
-  getStudentsData
+  getStudentsData,
+  chatgpt
 } from "../controller/userController";
 
 const router = express.Router();
@@ -26,6 +27,8 @@ router.get("/classroomData", classroomData);
 
 router.get("/getClassData/:id", getClassData);
 router.post("/updateUsername", updateUsername);
+
+router.post("/gemini", chatgpt);
 
 router.post("/addUser", addUser);
 router.post("/findUser", findUser);

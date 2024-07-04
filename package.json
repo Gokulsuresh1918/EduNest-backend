@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.14.1",
     "@livekit/components-react": "^2.3.1",
     "@livekit/components-styles": "^1.0.12",
     "@types/ejs": "^3.1.5",
@@ -32,6 +33,7 @@
     "mongoose": "^8.3.3",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.13",
+    "openai": "^4.52.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "razorpay": "^2.9.4",

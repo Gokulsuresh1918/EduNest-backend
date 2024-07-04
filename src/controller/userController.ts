@@ -4,6 +4,9 @@ import { Request, Response } from "express";
 import * as nodemailer from "nodemailer";
 import { Temporary } from "../modal/temporary";
 import bcrypt from "bcrypt";
+import axios from "axios";
+import { GenerateContentRequest, GoogleGenerativeAI, Part } from "@google/generative-ai";
+
 
 // Generate OTP
 const generateOtp = () => {
@@ -21,12 +24,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
-
 // Function to find user by ID or email and send data to the frontend
 export const userData = async (req: Request, res: Response) => {
   const { id, email } = req.query;
-// console.log('req querry',req.query);
+  // console.log('req querry',req.query);
 
   try {
     let userData;
@@ -37,9 +38,9 @@ export const userData = async (req: Request, res: Response) => {
       userData = await User.findOne({ email: email });
       if (userData) {
         // Generate OTP
-        const otp = userData.otp
-        console.log('otp anaii ',otp);
-        
+        const otp = userData.otp;
+        console.log("otp anaii ", otp);
+
         const htmlContent = `
           <html>
           <head>
@@ -145,7 +146,6 @@ export const findUser = async (req: any, res: any) => {
     // console.log("userData", userData);
 
     if (newpass) {
-      
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(newpass, salt);
 
@@ -299,10 +299,9 @@ export const addUser = async (req: Request, res: Response) => {
   res.status(201).json({ message: "User created successfully", newUser });
 };
 
-
 export const getStudentsData = async (req: Request, res: Response) => {
   const studentIds = req.query.ids;
-// console.log('entere',req.query.ids);
+  // console.log('entere',req.query.ids);
 
   if (!Array.isArray(studentIds)) {
     return res.status(400).json({ message: "Invalid student IDs" });
@@ -319,5 +318,41 @@ export const getStudentsData = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Initialize the Google Generative AI client with your API key
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+// Function to generate content based on a prompt
+async function generateContent(prompt: string | GenerateContentRequest | (string | Part)[]) {
+  try {
+    // Get the generative model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    // Generate content based on the prompt
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    return text;
+  } catch (error) {
+    console.error("Error generating content:", error);
+    throw error; // Propagate the error up
+  }
+}
+
+// Express route handler
+export const chatgpt = async (req:Request, res:Response) => {
+  const { question } = req.body;
+
+  try {
+    // Generate content using Google Generative AI
+    const generatedAnswer = await generateContent(question);
+
+    res.json({ answer: generatedAnswer });
+  } catch (error) {
+    console.error("Error generating answer:", error);
+    res.status(500).json({ error: "Failed to generate answer" });
   }
 };
