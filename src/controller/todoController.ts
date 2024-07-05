@@ -73,7 +73,7 @@ export const completedtodos = async (req: Request, res: Response) => {
 
     res.status(200).json(completedTodos);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching completed todos", error });
+    res.status(500).json({ message: "Error fetching completeds todos", error });
   }
 };
 export const deletecompletedtodos = async (req: Request, res: Response) => {
