@@ -50,7 +50,7 @@ export const updateSubscribe = async (req:Request, res:Response) => {
 
     return res.status(200).json({ message: "User subscription updated successfully", user });
   } catch (error) {
-    console.error("Error updating subscription:", error);
+    console.error("Error updating subscription section", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
