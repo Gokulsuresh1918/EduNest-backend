@@ -46,5 +46,6 @@ jobs:
           -e LIVEKIT_API_SECRET='${{ secrets.LIVEKIT_API_SECRET }}' \
           -e NEXT_PUBLIC_LIVEKIT_URL='${{ secrets.NEXT_PUBLIC_LIVEKIT_URL }}' \
           -e KEY_ID='${{ secrets.KEY_ID }}' \
+          -e GEMINI_API_KEY='${{ secrets.GEMINI_API_KEY }}' \
           -e KEY_SECRET='${{ secrets.KEY_SECRET }}' \
           gokulsuresh/edunest-backend:v1
