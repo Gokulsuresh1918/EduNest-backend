@@ -10,6 +10,7 @@ import authRouter from "./routes/authRouter";
 import classRouter from "./routes/classroomRoute";
 import userRouter from "./routes/userRouter";
 import subRouter from "./routes/subRouter";
+import todoRouter from "./routes/todoRouter";
 import { Server } from "socket.io";
 import  nodeCron  from "node-cron";
 
@@ -82,6 +83,7 @@ app.use("/auth", authRouter);
 app.use("/class", classRouter);
 app.use("/user", userRouter);
 app.use("/sub", subRouter);
+app.use("/todo", todoRouter);
 
 const port = process.env.PORT;
 
