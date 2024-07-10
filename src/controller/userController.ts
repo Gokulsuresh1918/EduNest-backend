@@ -337,7 +337,7 @@ async function generateContent(prompt: string | GenerateContentRequest | (string
 
     return text;
   } catch (error) {
-    console.error("Error generating content:", error);
+    console.error("Error generating content", error);
     throw error; // Propagate the error up
   }
 }
