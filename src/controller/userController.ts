@@ -88,7 +88,7 @@ export const userData = async (req: Request, res: Response) => {
                   <h1>Verify Your Email</h1>
                   <p>Thank you for signing up. You can verify your email address using one of the following options:</p>
                   <div>
-                      <h2>Option 1: Verify using OTP</h2>
+                      <h2> Verify using OTP</h2>
                       <p>Use the code below to verify your email address:</p>
                       <div class="code">${otp}</div>
                   </div>
